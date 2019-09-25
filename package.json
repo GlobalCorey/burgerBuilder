@@ -132,5 +132,8 @@
     "presets": [
       "react-app"
     ]
+  },
+  "devDependencies": {
+    "webpack": "^4.39.1"
   }
 }
