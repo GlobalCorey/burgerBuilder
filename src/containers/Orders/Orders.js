@@ -13,9 +13,7 @@ class Orders extends Component {
     componentDidMount() {
         axios.get('/orders.json')
         .then(result => {
-            console.log('result: ', result.data);
             const parsedOrders = Object.values(result.data);
-            console.log('parsedOrders: ', parsedOrders);
             this.setState({
                 loading: false,
                 orders: parsedOrders
@@ -36,7 +34,6 @@ class Orders extends Component {
                 return <Order price={order.price} ingredients={order.ingredients} key={i}/>
             })
         }
-        console.log('state: ', typeof this.state.orders);
         return(
             <div>
                 {orders}

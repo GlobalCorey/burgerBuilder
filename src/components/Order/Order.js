@@ -9,7 +9,6 @@ const order = (props) => {
             amount: props.ingredients[ingredientName]
         })
     }
-    console.log(ingredients)
     const ingredientList = ingredients.map((ing, i) => {
         return <span 
                     style={{
