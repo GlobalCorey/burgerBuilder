@@ -6,10 +6,15 @@ import * as serviceWorker from './serviceWorker';
 import {Provider} from 'react-redux';
 import {createStore, combineReducers, applyMiddleware, compose} from 'redux';
 import thunk from 'redux-thunk';
-import burgerReducer from './store/reducers/burgerReducer';
+import burgerBuilderReducer from './store/reducers/burgerBuilderReducer';
+import orderReducer from './store/reducers/orderReducer';
+import authReducer from './store/reducers/authReducer';
 
-//Combine reducers into a const
-//const reducers = combineReducers({burger: burgerReducer, order: orderReducer})
+const rootReducer = combineReducers({
+    burger: burgerBuilderReducer, 
+    order: orderReducer,
+    auth: authReducer
+})
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const logger = store => {
     //store recieves getState, dispatch(), expeted to return dispatch(action)
@@ -24,8 +29,8 @@ const logger = store => {
         }
     }
 }
-const store = createStore(burgerReducer,
-                            composeEnhancers(applyMiddleware(logger, thunk))); 
+const store = createStore(rootReducer,
+                            composeEnhancers(applyMiddleware(thunk))); 
 
 ReactDOM.render(
     <Provider store={store}>

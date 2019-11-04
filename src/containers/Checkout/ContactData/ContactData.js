@@ -4,6 +4,10 @@ import classes from './ContactData.module.css';
 import axios from '../../../axios-orders';
 import Spinner from '../../../components/UI/Spinner/Spinner';
 import Input from '../../../components/UI/Input/Input';
+import { connect } from 'react-redux';
+import * as orderActionCreator from '../../../store/actions/orderActionCreator';
+import withErrorHandler from '../../../hoc/withErrorHandler/withErrorHandler';
+import { auth } from '../../../store/actions/authActionCreator';
 
 class ContactData extends Component {
     state = {
@@ -88,15 +92,12 @@ class ContactData extends Component {
                 }
             }
         },
-        formIsValid: false,
-        loading: false
+        formIsValid: false
     }
 
     orderHandler = (event) => {
         event.preventDefault();
-        this.setState({
-            loading: true
-        })
+     
         const formData = {}
         for(let elementIdentifier in this.state.orderForm){
             formData[elementIdentifier] = this.state.orderForm[elementIdentifier].value;
@@ -104,17 +105,10 @@ class ContactData extends Component {
         const order = {
             ingredients: this.props.ingredients,
             price: this.props.totalPrice,
-            orderData: formData
+            orderData: formData,
+            userId: this.props.userId
         };
-        axios.post('/orders.json', order)
-        .then(result => {
-            this.setState({loading: false, purchasing: false})
-            this.props.history.push('/');
-        })
-        .catch(err => {
-            this.setState({loading: false, purchasing: false})
-            console.log(err);
-        })
+        this.props.orderBurger(order, this.props.token);
     }
 
     checkValidity = (value, rules) => {
@@ -178,7 +172,7 @@ class ContactData extends Component {
                     changed={(event) => this.inputChangedHandler(event, formElement.id)}/>
         })
         let form = <Spinner/>
-        if(!this.state.loading){
+        if(!this.props.loading){
             form = (
                 <form onSubmit={this.orderHandler}>
                     {inputComponents}
@@ -195,5 +189,18 @@ class ContactData extends Component {
     }
 }
 
+const mapStateToProps = ({order, auth}) => {
+    return {
+        loading: order.loading,
+        token: auth.token,
+        userId: auth.userId
+    }
+}
 
-export default ContactData;
+const mapDispatchToProps = dispatch => {
+    return {
+        orderBurger: (order, token) => dispatch(orderActionCreator.orderBurger(order, token))
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(withErrorHandler(ContactData, axios));
