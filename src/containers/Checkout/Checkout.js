@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import CheckoutSummary from '../../components/Order/CheckoutSummary/CheckoutSummary';
 import {Route, Redirect } from 'react-router-dom';
-// import queryString from 'querystring';
 import ContactData from '../../containers/Checkout/ContactData/ContactData';
 import { connect } from 'react-redux';
 
@@ -34,7 +33,7 @@ class Checkout extends Component {
                         render={ (props) => 
                             <ContactData 
                                 ingredients={this.props.ingredients} 
-                                totalPrice={this.props.totalPrice}
+                                totalPrice={this.props.totalPrice.toFixed(2)}
                                 {...props}/>
                     }/>
                 </div>

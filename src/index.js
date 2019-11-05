@@ -15,20 +15,20 @@ const rootReducer = combineReducers({
     order: orderReducer,
     auth: authReducer
 })
-const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-const logger = store => {
-    //store recieves getState, dispatch(), expeted to return dispatch(action)
-    return next => {
-        //the dispatch(action) function here. Initial action is null initially, so code 
-        // below does not execute on first startup
-        return action => {
-            console.log('[Middleware Dispatching: ', action);
-            const result = next(action);
-            console.log('[Middleware next state: ', store.getState());
-            return result;
-        }
-    }
-}
+const composeEnhancers = process.env.NODE_ENV === 'development' ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ : null  || compose;
+// const logger = store => {
+//     //store recieves getState, dispatch(), expeted to return dispatch(action)
+//     return next => {
+//         //the dispatch(action) function here. Initial action is null initially, so code 
+//         // below does not execute on first startup
+//         return action => {
+//             console.log('[Middleware Dispatching: ', action);
+//             const result = next(action);
+//             console.log('[Middleware next state: ', store.getState());
+//             return result;
+//         }
+//     }
+// }
 const store = createStore(rootReducer,
                             composeEnhancers(applyMiddleware(thunk))); 
 

@@ -7,7 +7,7 @@ import Input from '../../../components/UI/Input/Input';
 import { connect } from 'react-redux';
 import * as orderActionCreator from '../../../store/actions/orderActionCreator';
 import withErrorHandler from '../../../hoc/withErrorHandler/withErrorHandler';
-import { auth } from '../../../store/actions/authActionCreator';
+import { checkValidity } from '../../../utility/utility';
 
 class ContactData extends Component {
     state = {
@@ -104,28 +104,11 @@ class ContactData extends Component {
         }
         const order = {
             ingredients: this.props.ingredients,
-            price: this.props.totalPrice,
+            price: this.props.totalPrice.toFixed(2),
             orderData: formData,
             userId: this.props.userId
         };
         this.props.orderBurger(order, this.props.token);
-    }
-
-    checkValidity = (value, rules) => {
-        let isValid = true;
-
-        if(rules.required){
-            isValid = value.trim() !== '' && isValid;
-        }
-
-        if(rules.minLength){
-            isValid = value.length >= rules.minLength && isValid;
-        }
-        if(rules.maxLength){
-            isValid = value.length <= rules.maxLength && isValid;
-        }
-
-        return isValid;
     }
 
     inputChangedHandler = (event, inputIdentifier) => {
@@ -135,7 +118,7 @@ class ContactData extends Component {
         const newOrderFormElement = {
             ...newOrderForm[inputIdentifier]
         };
-        newOrderFormElement.validation.valid = this.checkValidity(event.target.value, newOrderFormElement.validation)
+        newOrderFormElement.validation.valid = checkValidity(event.target.value, newOrderFormElement.validation)
         newOrderFormElement.value = event.target.value;
         newOrderFormElement.touched = true;
         newOrderForm[inputIdentifier] = newOrderFormElement;
