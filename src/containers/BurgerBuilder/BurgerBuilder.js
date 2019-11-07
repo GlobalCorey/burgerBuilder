@@ -13,7 +13,7 @@ import * as burgerActionCreator from '../../store/actions/burgerActionCreator';
 import * as orderActionCreator from '../../store/actions/orderActionCreator';
 import { setAuthRedirectPath } from '../../store/actions/authActionCreator';
 
-class BurgerBuilder extends Component{
+export class BurgerBuilder extends Component{
     state = {
         purchasing: false,
         // loading: false,
