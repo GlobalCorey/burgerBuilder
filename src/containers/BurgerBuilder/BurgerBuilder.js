@@ -119,6 +119,9 @@ const mapDispatchToProps = dispatch => {
     }
 }
 
-const burgerBuilderConnect = connect(mapStateToProps, mapDispatchToProps)(withErrorHandler(BurgerBuilder, axios));
 
-export default burgerBuilderConnect;
+//Changed the import order from export default connect(mapStateToProps, mapDispatchToProps)(withErrorHandler(BurgerBuilder, axios));
+// to below to avoid constant resetting/initializing of axios interceptors due to redux state changes (ingredients, price)
+// being passed to the wrapped BurgerBuilder component inside the connect functions.
+
+export default withErrorHandler(connect(mapStateToProps, mapDispatchToProps)(BurgerBuilder), axios);
