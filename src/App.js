@@ -12,9 +12,12 @@ const AsyncOrders = lazy(() => import('./containers/Orders/Orders'));
 const AsyncAuth = lazy(() => import('./containers/Auth/Auth'));
 
 const App = props => {
+  
+  const { onCheckBrowserAuthData } = props;
+
   useEffect(() => {
-    props.onCheckBrowserAuthData();
-  }, [])
+    onCheckBrowserAuthData();
+  }, [onCheckBrowserAuthData])
 
   const lazyComponent = (Component) => {
     return props => (
