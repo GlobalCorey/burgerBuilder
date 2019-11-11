@@ -1,5 +1,23 @@
 import * as actionTypes from './actionTypes';
 import axios from '../../axios-orders';
+const INGREDIENTS_FIREBASE_URL = 'INSERT_FIREBASE_DB_URL'; //EX: https://<FIREBASE_DB_NAME>.firebaseio.com/ingredients.json
+
+// FIREBASE REALTIME DATABASE RULES
+// {
+//     /* Visit https://firebase.google.com/docs/database/security to learn more about security rules. */
+//     "rules": {
+//       "ingredients": {
+//         ".read": true,
+//           ".write": true
+//       },
+//       "orders": {
+//         ".read": "auth != null",
+//           ".write": "auth != null",
+//             ".indexOn": ["userId"]
+//       }
+      
+//     }
+//   }
 
 export const addIngredient = (value) => {
     return {
@@ -33,7 +51,7 @@ const fetchIngredientsFailed = () => {
 
 export const fetchIngredients = () => {
     return dispatch => {
-        axios.get('https://react-burger-builder-a26b6.firebaseio.com/ingredients.json')
+        axios.get(INGREDIENTS_FIREBASE_URL)
         .then(result => {
             dispatch(initIngredients(result.data));
         })

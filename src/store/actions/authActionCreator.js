@@ -2,7 +2,7 @@ import * as actionTypes from '../actions/actionTypes';
 import axios from 'axios';
 const FIREBASE_SIGNUP_URL = 'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=';
 const FIREBASE_SIGNIN_URL = 'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=';
-const FIREBASE_KEY = 'AIzaSyBQmyArCeWCWq-mz-ta0CLoPf4QXNg7vTw';
+const FIREBASE_WEB_API_KEY = 'INSERT_FIREBASE_KEY';
 
 export const setAuthRedirectPath = (path) => {
     return {
@@ -82,7 +82,7 @@ export const auth = (email, password, isSignUp) => {
      }
     return dispatch => {
         dispatch(authStart());
-        axios.post(url + FIREBASE_KEY, authData)
+        axios.post(url + FIREBASE_WEB_API_KEY, authData)
         .then(result => {
             const expirationData = new Date(new Date().getTime() + result.data.expiresIn * 1000);
             localStorage.setItem('token', result.data.idToken);
