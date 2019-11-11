@@ -1,23 +1,26 @@
 import React, { Suspense, useEffect, lazy } from 'react';
-import {connect} from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 
 import Layout from './hoc/Layout/Layout'
 import BurgerBuilder from './containers/BurgerBuilder/BurgerBuilder'
 import Logout from './containers/Auth/Logout/Logout';
-import {BrowserRouter, Route, Switch, Redirect} from 'react-router-dom';
-import {authCheckState} from './store/actions/authActionCreator';
+import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
+import { authCheckState } from './store/actions/authActionCreator';
 
 const AsyncCheckout = lazy(() => import('./containers/Checkout/Checkout'));
 const AsyncOrders = lazy(() => import('./containers/Orders/Orders'));
 const AsyncAuth = lazy(() => import('./containers/Auth/Auth'));
 
-const App = props => {
+const App = () => {
   
-  const { onCheckBrowserAuthData } = props;
+  const isAuthenticated = useSelector((state) => state.auth.token);
+
+  const dispatch = useDispatch();
+  //Could refactor to set functions needed to constants and have them call dispatch
 
   useEffect(() => {
-    onCheckBrowserAuthData();
-  }, [onCheckBrowserAuthData])
+    dispatch(authCheckState());
+  }, [dispatch])
 
   const lazyComponent = (Component) => {
     return props => (
@@ -34,7 +37,7 @@ const App = props => {
         <Redirect to='/'/>
       </Switch>
     );
-    if(props.isAuthenticated){
+    if(isAuthenticated){
       routes = (
         <Switch>
             <Route path='/checkout' component={lazyComponent(AsyncCheckout)}/>
@@ -57,16 +60,4 @@ const App = props => {
     );
 }
 
-const mapStateToProps = ({auth}) => {
-  return {
-    isAuthenticated: auth.token !== null
-  }
-}
-
-const mapDispatchToProps = dispatch => {
-  return {
-    onCheckBrowserAuthData: () => dispatch(authCheckState())
-  }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(App);
+export default App;

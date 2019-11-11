@@ -4,7 +4,7 @@ import classes from './ContactData.module.css';
 import axios from '../../../axios-orders';
 import Spinner from '../../../components/UI/Spinner/Spinner';
 import Input from '../../../components/UI/Input/Input';
-import { connect } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import * as orderActionCreator from '../../../store/actions/orderActionCreator';
 import withErrorHandler from '../../../hoc/withErrorHandler/withErrorHandler';
 import { checkValidity } from '../../../utility/utility';
@@ -94,6 +94,12 @@ const ContactData = (props) => {
     })
     const [formIsValid, setFormIsValid] = useState(false);
 
+    const loading = useSelector((state) => state.order.loading);
+    const token = useSelector((state) => state.auth.token);
+    const userId = useSelector((state) => state.auth.userId);
+
+    const dispatch = useDispatch();
+
     const orderHandler = (event) => {
         event.preventDefault();
      
@@ -105,9 +111,9 @@ const ContactData = (props) => {
             ingredients: props.ingredients,
             price: props.totalPrice.toFixed(2),
             orderData: formData,
-            userId: props.userId
+            userId: userId
         };
-        props.orderBurger(order, props.token);
+        dispatch(orderActionCreator.orderBurger(order, token));
     }
 
     const inputChangedHandler = (event, inputIdentifier) => {
@@ -151,7 +157,7 @@ const ContactData = (props) => {
                 changed={(event) => inputChangedHandler(event, formElement.id)}/>
     })
     let form = <Spinner/>
-    if(!props.loading){
+    if(!loading){
         form = (
             <form onSubmit={orderHandler}>
                 {inputComponents}
@@ -167,18 +173,4 @@ const ContactData = (props) => {
     )
 }
 
-const mapStateToProps = ({order, auth}) => {
-    return {
-        loading: order.loading,
-        token: auth.token,
-        userId: auth.userId
-    }
-}
-
-const mapDispatchToProps = dispatch => {
-    return {
-        orderBurger: (order, token) => dispatch(orderActionCreator.orderBurger(order, token))
-    }
-}
-
-export default withErrorHandler(connect(mapStateToProps, mapDispatchToProps)(ContactData), axios);
+export default withErrorHandler(ContactData, axios);

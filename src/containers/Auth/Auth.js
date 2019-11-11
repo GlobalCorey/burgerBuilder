@@ -138,11 +138,4 @@ const Auth = (props) => {
     );
 }
 
-// const mapDispatchToProps = dispatch => {
-//     return {
-//         onAuth: (email, password, isSignUp) => dispatch(authActionCreator.auth(email, password, isSignUp)),
-//         onSetAuthRedirectPath: (path) => dispatch(authActionCreator.setAuthRedirectPath(path))
-//     }
-// }
-
 export default Auth;

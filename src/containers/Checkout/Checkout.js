@@ -2,9 +2,13 @@ import React from 'react';
 import CheckoutSummary from '../../components/Order/CheckoutSummary/CheckoutSummary';
 import {Route, Redirect } from 'react-router-dom';
 import ContactData from '../../containers/Checkout/ContactData/ContactData';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 const Checkout = (props) => {
+
+    const ingredients = useSelector((state) => state.burger.ingredients);
+    const totalPrice = useSelector((state) => state.burger.totalPrice);
+    const purchased = useSelector((state) => state.order.purchased);
 
     const checkoutCanceledHandler = () => {
         props.history.goBack();
@@ -17,13 +21,13 @@ const Checkout = (props) => {
     
     let summary = <Redirect to='/'/>;
         
-    if(props.ingredients){
-        const purchaseRedirect = props.purchased ? <Redirect to='/'/> : null;
+    if(ingredients){
+        const purchaseRedirect = purchased ? <Redirect to='/'/> : null;
         summary = (
             <div>
                 {purchaseRedirect}
                 <CheckoutSummary 
-                ingredients={props.ingredients}
+                ingredients={ingredients}
                 checkoutCancel={checkoutCanceledHandler}
                 checkoutContinue={checkoutContinueHandler}
                 />
@@ -31,8 +35,8 @@ const Checkout = (props) => {
                     path={props.match.url + '/contact-data'} 
                     render={ (propsPassed) => 
                         <ContactData 
-                            ingredients={props.ingredients} 
-                            totalPrice={props.totalPrice}
+                            ingredients={ingredients} 
+                            totalPrice={totalPrice}
                             {...propsPassed}/>
                 }/>
             </div>
@@ -45,12 +49,4 @@ const Checkout = (props) => {
     )
 }
 
-const mapStateToProps = ({burger, order}) => {
-    return {
-        ingredients: burger.ingredients,
-        totalPrice: burger.totalPrice,
-        purchased: order.purchased
-    }
-}
-
-export default connect(mapStateToProps)(Checkout);
+export default Checkout;

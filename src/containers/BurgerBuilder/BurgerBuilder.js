@@ -8,7 +8,7 @@ import OrderSummary from '../../components/Burger/OrderSummary/OrderSummary'
 import Spinner from '../../components/UI/Spinner/Spinner';
 import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
 import axios from '../../axios-orders';
-import { connect, useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import * as burgerActionCreator from '../../store/actions/burgerActionCreator';
 import * as orderActionCreator from '../../store/actions/orderActionCreator';
 import { setAuthRedirectPath } from '../../store/actions/authActionCreator';
@@ -21,19 +21,19 @@ export const BurgerBuilder = (props) => {
     const totalPrice = useSelector((state) => state.burger.totalPrice);
     const error = useSelector((state) => state.burger.error);
     const isAuth = useSelector((state) => state.auth.token !== null);
-    
-    const { fetchIngredients } = props;
+
+    const dispatch = useDispatch();
 
     useEffect(() => {
-        fetchIngredients();
-    }, [fetchIngredients])
+        dispatch(burgerActionCreator.fetchIngredients());
+    }, [dispatch])
 
     const purchaseHandler = () => {
         if(isAuth){
             setPurchasing(true);
         }
         else{
-            props.setAuthRedirectPath('/checkout');
+            dispatch(setAuthRedirectPath('/checkout'));
             props.history.push('/auth');
         }
     }
@@ -41,10 +41,12 @@ export const BurgerBuilder = (props) => {
     const purchaseCancelHandler = () => {
         setPurchasing(false);
     }
+
     const purchaseContinueHandler = () => {
-        props.initPurchase();
+        dispatch(orderActionCreator.purchaseInit());
         props.history.push('/checkout');
     }
+    
     const updatePurchaseState = (ingredients) =>{
         const sum = Object.keys(ingredients).map(igKey => {
             return ingredients[igKey];
@@ -77,8 +79,8 @@ export const BurgerBuilder = (props) => {
                 <Burger ingredients={ingredients}/>
                 <BuildControls
                     isAuthenticated = {isAuth}
-                    ingredientAdded = {props.addIngredient}
-                    ingredientRemoved = {props.removeIngredient}
+                    ingredientAdded = {(ingredientType) => dispatch(burgerActionCreator.addIngredient(ingredientType))}
+                    ingredientRemoved = {(ingredientType) => dispatch(burgerActionCreator.removeIngredient(ingredientType))}
                     disabled={disableInfo}
                     price={totalPrice}
                     purchasable={updatePurchaseState(ingredients)}
@@ -101,18 +103,9 @@ export const BurgerBuilder = (props) => {
     );
 }
 
-const mapDispatchToProps = dispatch => {
-    return {
-        addIngredient: (ingredientType) => dispatch(burgerActionCreator.addIngredient(ingredientType)),
-        removeIngredient: (ingredientType) => dispatch(burgerActionCreator.removeIngredient(ingredientType)),
-        fetchIngredients: () => dispatch(burgerActionCreator.fetchIngredients()),
-        initPurchase: () => dispatch(orderActionCreator.purchaseInit()),
-        setAuthRedirectPath: (path) => dispatch(setAuthRedirectPath(path))
-    }
-}
-
+//Comment below relates to use of connect with redux. Hooks are being used now instead
 //Changed the import order from export default connect(mapStateToProps, mapDispatchToProps)(withErrorHandler(BurgerBuilder, axios));
 // to below to avoid constant resetting/initializing of axios interceptors due to redux state changes (ingredients, price)
 // being passed to the wrapped BurgerBuilder component inside the connect functions.
 
-export default withErrorHandler(connect(null, mapDispatchToProps)(BurgerBuilder), axios);
+export default withErrorHandler(BurgerBuilder, axios);
